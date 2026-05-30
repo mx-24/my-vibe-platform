@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Track Manager</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f4f6f9;
+    --card-bg: #ffffff;
+    --primary: #4f6ef7;
+    --primary-hover: #3b5bdb;
+    --primary-light: #e8ecff;
+    --danger: #e03131;
+    --danger-hover: #c92a2a;
+    --success: #2f9e44;
+    --text: #1a1a2e;
+    --text-secondary: #6c757d;
+    --border: #e2e6ea;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .app-header {
+    background: linear-gradient(135deg, var(--primary), #7c5cfc);
+    color: #fff;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-header::after {
+    content: ''; position: absolute; bottom: -30px; left: 0; right: 0;
+    height: 60px; background: var(--bg); border-radius: 50% 50% 0 0;
+  }
+  .app-header h1 { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.5px; }
+  .app-header p { opacity: 0.85; margin-top: 0.35rem; font-size: 0.95rem; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 1rem 1.25rem 3rem; }
+
+  /* Stats */
+  .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
+  .stat-card { background: var(--card-bg); border-radius: var(--radius); padding: 1.15rem 1.25rem; box-shadow: var(--shadow); text-align: center; }
+  .stat-card .stat-number { font-size: 1.65rem; font-weight: 700; color: var(--primary); }
+  .stat-card .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 0.15rem; }
+  .stat-card.finished-stat .stat-number { color: var(--success); }
+  .stat-card.plan-stat .stat-number { color: #e67700; }
+
+  /* Charts */
+  .charts-section { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.75rem; }
+  .chart-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
+  .chart-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text); display: flex; align-items: center; gap: 0.4rem; }
+  .chart-container { position: relative; width: 100%; height: 260px; }
+
+  /* Form */
+  .form-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.75rem; margin-bottom: 1.75rem; }
+  .form-card h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+  .form-card h2 .icon { width: 28px; height: 28px; background: var(--primary-light); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; }
+  .form-group.full-width { grid-column: 1 / -1; }
+  .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-group input, .form-group textarea, .form-group select {
+    padding: 0.7rem 0.9rem; border: 2px solid var(--border); border-radius: var(--radius-sm);
+    font-size: 0.92rem; font-family: inherit; color: var(--text); background: #fafbfc; transition: var(--transition); outline: none;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px var(--primary-light); }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .form-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+
+  /* Buttons */
+  .btn {
+    padding: 0.7rem 1.5rem; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: var(--transition); font-family: inherit; display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(79, 110, 247, 0.35); }
+  .btn-ai { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+  .btn-ai:hover { background: linear-gradient(135deg, #4f46e5, #7c3aed); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); }
+  .btn-cancel { background: var(--border); color: var(--text-secondary); display: none; }
+  .btn-cancel:hover { background: #d0d5db; }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
+  .search-box { flex: 1; min-width: 200px; position: relative; }
+  .search-box input { width: 100%; padding: 0.65rem 0.9rem 0.65rem 2.4rem; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; font-family: inherit; background: var(--card-bg); outline: none; transition: var(--transition); }
+  .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+  .search-box .search-icon { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 0.85rem; pointer-events: none; }
+  .filter-select { padding: 0.65rem 0.9rem; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; font-family: inherit; background: var(--card-bg); outline: none; cursor: pointer; transition: var(--transition); }
+  .filter-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+  /* Table */
+  .table-wrapper { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 650px; }
+  thead { background: #f8f9fb; }
+  thead th { padding: 0.9rem 1rem; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-secondary); font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  tbody tr { transition: var(--transition); }
+  tbody tr:hover { background: #f8faff; }
+  tbody td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .badge-plan { background: #fff3bf; color: #e67700; }
+  .badge-finished { background: #ebfbee; color: #2f9e44; }
+  .action-btns { display: flex; gap: 0.4rem; }
+  .btn-icon { width: 34px; height: 34px; border: none; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: var(--transition); background: transparent; }
+  .btn-icon.edit { color: var(--primary); } .btn-icon.edit:hover { background: var(--primary-light); }
+  .btn-icon.delete { color: var(--danger); } .btn-icon.delete:hover { background: #ffe3e3; }
+  .content-cell { max-width: 280px; }
+  .content-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+
+  /* Cards (Mobile) */
+  .cards-wrapper { display: none; flex-direction: column; gap: 1rem; }
+  .target-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; position: relative; transition: var(--transition); }
+  .target-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .target-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+  .target-card .card-index { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); background: #f0f2f5; padding: 0.2rem 0.6rem; border-radius: 6px; }
+  .target-card .card-content { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.75rem; line-height: 1.5; word-break: break-word; }
+  .target-card .card-dates { display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.85rem; flex-wrap: wrap; }
+  .target-card .card-dates span { display: flex; align-items: center; gap: 0.3rem; }
+  .target-card .card-actions { display: flex; gap: 0.4rem; border-top: 1px solid var(--border); padding-top: 0.75rem; }
+
+  /* Empty State */
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-secondary); }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; opacity: 0.4; }
+  .empty-state p { font-size: 0.95rem; }
+
+  /* Toast */
+  .toast-container { position: fixed; top: 1.25rem; right: 1.25rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+  .toast { background: var(--card-bg); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); padding: 0.85rem 1.25rem; font-size: 0.88rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; animation: slideIn 0.35s ease, fadeOut 0.35s ease 2.5s forwards; border-left: 4px solid var(--primary); }
+  .toast.success { border-left-color: var(--success); } .toast.error { border-left-color: var(--danger); }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+  /* Modals */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 2rem; max-width: 420px; width: 100%; text-align: center; animation: modalIn 0.3s ease; }
+  @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+  .modal p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
+  .btn-danger { background: var(--danger); color: #fff; } .btn-danger:hover { background: var(--danger-hover); }
+
+  /* AI Modal Specific */
+  .ai-modal { max-width: 620px; text-align: left; }
+  .ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
+  .ai-header h3 { margin-bottom: 0; font-size: 1.2rem; }
+  .close-ai { background: var(--border); color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; }
+  .close-ai:hover { background: #d0d5db; color: var(--text); }
+  .ai-content { min-height: 150px; max-height: 70vh; overflow-y: auto; font-size: 0.95rem; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  .ai-content strong { color: var(--primary); }
+  .ai-loading { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; color: var(--text-secondary); padding: 2rem 0; }
+  .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-error { background: #ffe3e3; color: var(--danger); padding: 1.25rem; border-radius: var(--radius-sm); text-align: center; line-height: 1.6; }
+  .ai-error small { display: block; margin-top: 0.5rem; opacity: 0.8; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+    .stat-card { padding: 0.85rem 0.5rem; } .stat-card .stat-number { font-size: 1.3rem; } .stat-card .stat-label { font-size: 0.65rem; }
+    .charts-section { grid-template-columns: 1fr; } .chart-container { height: 220px; }
+    .table-wrapper { display: none; } .cards-wrapper { display: flex; }
+    .app-header h1 { font-size: 1.45rem; } .container { padding: 0.75rem 1rem 2.5rem; } .form-card { padding: 1.25rem; }
+  }
+  @media (min-width: 769px) { .cards-wrapper { display: none !important; } }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c5c9ce; border-radius: 3px; }
+  .fade-row { animation: rowFade 0.3s ease; }
+  @keyframes rowFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>📚 Learning Track Manager</h1>
+  <p>Plan, track, and finish your learning goals</p>
+</header>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-number" id="statTotal">0</div><div class="stat-label">Total</div></div>
+    <div class="stat-card plan-stat"><div class="stat-number" id="statPlan">0</div><div class="stat-label">In Plan</div></div>
+    <div class="stat-card finished-stat"><div class="stat-number" id="statFinished">0</div><div class="stat-label">Finished</div></div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-section">
+    <div class="chart-card">
+      <h3>📊 Status Distribution</h3>
+      <div class="chart-container"><canvas id="statusPieChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>📅 Targets by Start Date</h3>
+      <div class="chart-container"><canvas id="dateBarChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <h2><span class="icon">✏️</span> <span id="formTitle">Add New Target</span></h2>
+    <form id="targetForm" autocomplete="off">
+      <input type="hidden" id="editIndex" value="">
+      <div class="form-grid">
+        <div class="form-group"><label for="status">Status</label><select id="status" required><option value="plan">📋 Plan</option><option value="finished">✅ Finished</option></select></div>
+        <div class="form-group"><label for="startDate">Start Date</label><input type="date" id="startDate" required></div>
+        <div class="form-group full-width"><label for="content">Content</label><textarea id="content" placeholder="Describe your learning target..." required></textarea></div>
+        <div class="form-group full-width"><label for="endDate">End Date</label><input type="date" id="endDate" required></div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="submitBtn"><span>＋</span> Add Target</button>
+        <button type="button" class="btn btn-cancel" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Search targets..."></div>
+    <select class="filter-select" id="filterStatus"><option value="all">All Status</option><option value="plan">📋 Plan</option><option value="finished">✅ Finished</option></select>
+    <button class="btn btn-ai" id="aiSummaryBtn"><span>🤖</span> AI Summary</button>
+  </div>
+
+  <!-- Desktop Table -->
+  <div class="table-wrapper" id="tableWrapper">
+    <div class="table-scroll">
+      <table><thead><tr><th>#</th><th>Status</th><th>Content</th><th>Start Date</th><th>End Date</th><th>Actions</th></tr></thead>
+      <tbody id="tableBody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- Mobile Cards -->
+  <div class="cards-wrapper" id="cardsWrapper"></div>
+
+  <!-- Empty State -->
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon">📝</div><p>No learning targets yet. Add one above to get started!</p>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>🗑️ Delete Target</h3>
+    <p>Are you sure you want to delete this learning target? This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" style="display:inline-flex" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-danger" id="modalConfirmBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Summary Modal -->
+<div class="modal-overlay" id="aiModal">
+  <div class="modal ai-modal">
+    <div class="ai-header">
+      <h3>🤖 AI Learning Summary</h3>
+      <button class="btn-icon close-ai" id="closeAiModal">✕</button>
+    </div>
+    <div class="ai-content" id="aiResponseContent">
+      <div class="ai-loading"><div class="spinner"></div><p>Analyzing your learning progress...</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  let targets = JSON.parse(localStorage.getItem('learningTargets') || '[]');
+  let deleteTargetIndex = null, isEditing = false;
+  let statusPieChart, dateBarChart;
+
+  const form = document.getElementById('targetForm');
+  const formTitle = document.getElementById('formTitle');
+  const submitBtn = document.getElementById('submitBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const editIndexField = document.getElementById('editIndex');
+  const statusSelect = document.getElementById('status');
+  const startDateInput = document.getElementById('startDate');
+  const contentInput = document.getElementById('content');
+  const endDateInput = document.getElementById('endDate');
+  const searchInput = document.getElementById('searchInput');
+  const filterStatus = document.getElementById('filterStatus');
+  const tableBody = document.getElementById('tableBody');
+  const cardsWrapper = document.getElementById('cardsWrapper');
+  const emptyState = document.getElementById('emptyState');
+  const deleteModal = document.getElementById('deleteModal');
+  const aiSummaryBtn = document.getElementById('aiSummaryBtn');
+  const aiModal = document.getElementById('aiModal');
+  const closeAiModal = document.getElementById('closeAiModal');
+  const aiResponseContent = document.getElementById('aiResponseContent');
+
+  // Helpers
+  function save() { localStorage.setItem('learningTargets', JSON.stringify(targets)); }
+  function getNextIndex() { return targets.length === 0 ? 1 : Math.max(...targets.map(t => t.index)) + 1; }
+  function formatDate(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr + 'T00:00:00'); return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span> ${message}`;
+    document.getElementById('toastContainer').appendChild(toast);
+    setTimeout(() => toast.parentNode?.removeChild(toast), 3000);
+  }
+  function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+  function getFilteredTargets() {
+    let f = [...targets];
+    const q = searchInput.value.toLowerCase().trim(), s = filterStatus.value;
+    if (s !== 'all') f = f.filter(t => t.status === s);
+    if (q) f = f.filter(t => t.content.toLowerCase().includes(q) || t.status.toLowerCase().includes(q));
+    return f;
+  }
+
+  // Charts
+  function initCharts() {
+    if (typeof Chart === 'undefined') return;
+    Chart.defaults.color = '#6c757d';
+    Chart.defaults.font.family = "'Segoe UI', system-ui, -apple-system, sans-serif";
+
+    statusPieChart = new Chart(document.getElementById('statusPieChart').getContext('2d'), {
+      type: 'doughnut',
+      data: { labels: [], datasets: [] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true, pointStyleWidth: 10 } }, tooltip: { backgroundColor: '#1a1a2e', padding: 10, cornerRadius: 8 } } }
+    });
+
+    dateBarChart = new Chart(document.getElementById('dateBarChart').getContext('2d'), {
+      type: 'bar',
+      data: { labels: [], datasets: [] },
+      options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false }, ticks: { font: { size: 11 } } }, y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f2f5' }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1a1a2e', padding: 10, cornerRadius: 8 } } }
+    });
+  }
+
+  function updateCharts() {
+    if (!statusPieChart || !dateBarChart) return;
+    const plan = targets.filter(t => t.status === 'plan').length, fin = targets.filter(t => t.status === 'finished').length;
+    statusPieChart.data = { labels: ['Plan', 'Finished'], datasets: [{ data: [plan, fin], backgroundColor: ['#e67700', '#2f9e44'], hoverBackgroundColor: ['#d95d00', '#248036'], borderWidth: 2, borderColor: '#ffffff' }] };
+    statusPieChart.update('active');
+
+    const dateCounts = {}; targets.forEach(t => { const d = t.startDate; dateCounts[d] = (dateCounts[d] || 0) + 1; });
+    const sorted = Object.keys(dateCounts).sort();
+    dateBarChart.data = { labels: sorted.map(formatDate), datasets: [{ label: 'Targets', data: sorted.map(d => dateCounts[d]), backgroundColor: '#4f6ef7', hoverBackgroundColor: '#3b5bdb', borderRadius: 6, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }] };
+    dateBarChart.update('active');
+  }
+
+  // Render
+  function render() {
+    const filtered = getFilteredTargets();
+    document.getElementById('statTotal').textContent = targets.length;
+    document.getElementById('statPlan').textContent = targets.filter(t => t.status === 'plan').length;
+    document.getElementById('statFinished').textContent = targets.filter(t => t.status === 'finished').length;
+    updateCharts();
+
+    if (filtered.length === 0) { emptyState.style.display = 'block'; tableBody.innerHTML = ''; cardsWrapper.innerHTML = ''; return; }
+    emptyState.style.display = 'none';
+    filtered.sort((a, b) => a.index - b.index);
+
+    tableBody.innerHTML = filtered.map(t => `
+      <tr class="fade-row">
+        <td><strong>${t.index}</strong></td>
+        <td><span class="badge ${t.status === 'plan' ? 'badge-plan' : 'badge-finished'}">${t.status}</span></td>
+        <td class="content-cell"><span class="content-text" title="${escapeHtml(t.content)}">${escapeHtml(t.content)}</span></td>
+        <td>${formatDate(t.startDate)}</td><td>${formatDate(t.endDate)}</td>
+        <td><div class="action-btns"><button class="btn-icon edit" title="Edit" onclick="app.edit(${t.index})">✏️</button><button class="btn-icon delete" title="Delete" onclick="app.confirmDelete(${t.index})">🗑️</button></div></td>
+      </tr>`).join('');
+
+    cardsWrapper.innerHTML = filtered.map(t => `
+      <div class="target-card fade-row">
+        <div class="card-top"><span class="card-index">#${t.index}</span><span class="badge ${t.status === 'plan' ? 'badge-plan' : 'badge-finished'}">${t.status}</span></div>
+        <div class="card-content">${escapeHtml(t.content)}</div>
+        <div class="card-dates"><span>📅 Start: ${formatDate(t.startDate)}</span><span>🏁 End: ${formatDate(t.endDate)}</span></div>
+        <div class="card-actions"><button class="btn-icon edit" title="Edit" onclick="app.edit(${t.index})">✏️ Edit</button><button class="btn-icon delete" title="Delete" onclick="app.confirmDelete(${t.index})">🗑️ Delete</button></div>
+      </div>`).join('');
+  }
+
+  // Form
+  function resetForm() { form.reset(); editIndexField.value = ''; isEditing = false; formTitle.textContent = 'Add New Target'; submitBtn.innerHTML = '<span>＋</span> Add Target'; cancelBtn.style.display = 'none'; startDateInput.value = new Date().toISOString().split('T')[0]; }
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const c = contentInput.value.trim(), s = statusSelect.value, sd = startDateInput.value, ed = endDateInput.value;
+    if (!c || !sd || !ed) { showToast('Please fill in all fields.', 'error'); return; }
+    if (new Date(ed) < new Date(sd)) { showToast('End date cannot be before start date.', 'error'); return; }
+
+    if (isEditing) {
+      const idx = parseInt(editIndexField.value), t = targets.find(x => x.index === idx);
+      if (t) { t.content = c; t.status = s; t.startDate = sd; t.endDate = ed; showToast('Target updated!'); }
+      resetForm();
+    } else { targets.push({ index: getNextIndex(), content: c, status: s, startDate: sd, endDate: ed }); showToast('Target added!'); resetForm(); }
+    save(); render();
+  });
+  cancelBtn.addEventListener('click', resetForm);
+
+  // Actions
+  window.app = {
+    edit: function(index) {
+      const t = targets.find(x => x.index === index); if (!t) return;
+      editIndexField.value = t.index; statusSelect.value = t.status; contentInput.value = t.content; startDateInput.value = t.startDate; endDateInput.value = t.endDate;
+      isEditing = true; formTitle.textContent = 'Edit Target #' + t.index; submitBtn.innerHTML = '<span>💾</span> Update Target'; cancelBtn.style.display = 'inline-flex';
+      document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    confirmDelete: function(index) { deleteTargetIndex = index; deleteModal.classList.add('active'); }
+  };
+
+  document.getElementById('modalCancelBtn').addEventListener('click', () => { deleteModal.classList.remove('active'); deleteTargetIndex = null; });
+  deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) { deleteModal.classList.remove('active'); deleteTargetIndex = null; } });
+  document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+    if (deleteTargetIndex !== null) {
+      targets = targets.filter(t => t.index !== deleteTargetIndex);
+      if (isEditing && parseInt(editIndexField.value) === deleteTargetIndex) resetForm();
+      save(); render(); showToast('Target deleted.', 'error'); deleteTargetIndex = null; deleteModal.classList.remove('active');
+    }
+  });
+
+  searchInput.addEventListener('input', render); filterStatus.addEventListener('change', render);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && deleteModal.classList.contains('active')) { deleteModal.classList.remove('active'); deleteTargetIndex = null; } });
+
+  // AI Summary Logic
+  aiSummaryBtn.addEventListener('click', async () => {
+    aiModal.classList.add('active');
+    aiResponseContent.innerHTML = `<div class="ai-loading"><div class="spinner"></div><p>Analyzing your learning progress...</p></div>`;
+    
+    if (targets.length === 0) {
+      aiResponseContent.innerHTML = `<div class="ai-error">No learning targets to analyze yet. Add some targets first!</div>`;
+      return;
+    }
+
+    const prompt = `You are an AI learning assistant. Analyze the following learning track data and provide a response in this EXACT format:
+1. Overall Progress Summary (1-2 concise sentences)
+2. Delays & Unfinished Long-running Tasks (list items with status "plan" that have passed their end date or span >30 days)
+3. 3 Practical Improvements (bullet points with actionable advice)
+
+DATA:
+${targets.map(t => `#${t.index} [${t.status.toUpperCase()}] "${t.content}" (Start: ${t.startDate}, End: ${t.endDate})`).join('\n')}
+
+Keep it professional, concise, and directly useful.`;
+
+    try {
+      const res = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'qwen3:0.6b', prompt, stream: false, temperature: 0.3 })
+      });
+      if (!res.ok) throw new Error(`Ollama returned HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data.response) throw new Error('Empty response from model');
+      
+      // Simple formatting for readability
+      const formatted = data.response
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>')
+        .replace(/^(\d\.\s)/g, '<br><strong>$1</strong>')
+        .replace(/^(-\s)/g, '&nbsp;&nbsp;• ');
+      aiResponseContent.innerHTML = formatted;
+    } catch (err) {
+      aiResponseContent.innerHTML = `
+        <div class="ai-error">
+          <strong>⚠️ Failed to generate AI summary</strong><br>
+          ${err.message}<br><br>
+          <small>Ensure Ollama is running locally (port 11434) and "qwen3:0.6b" is pulled: <code>ollama pull qwen3:0.6b</code></small>
+        </div>`;
+    }
+  });
+
+  closeAiModal.addEventListener('click', () => aiModal.classList.remove('active'));
+  aiModal.addEventListener('click', (e) => { if (e.target === aiModal) aiModal.classList.remove('active'); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && aiModal.classList.contains('active')) aiModal.classList.remove('active'); });
+
+  // Init
+  resetForm(); initCharts(); render();
+})();
+</script>
+</body>
+</html>
