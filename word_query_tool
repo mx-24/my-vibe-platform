@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌿 The Enchanted Dictionary & Treehouse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sage-light: #E8EDE5;
+      --sage-pale: #D4DDD0;
+      --sage-medium: #B5C4A8;
+      --sage-main: #9AAF88;
+      --sage-dark: #7A8B6F;
+      --forest: #5A6B5C;
+      --moss: #4A5948;
+      --cream: #F5F3ED;
+      --ivory: #FAF8F3;
+      --warm-brown: #8B7355;
+      --soft-gold: #C9B99A;
+      --text-primary: #3D4035;
+      --text-secondary: #5A5D52;
+      --shadow-soft: rgba(61, 64, 53, 0.08);
+      --shadow-medium: rgba(61, 64, 53, 0.15);
+      --chat-user-bg: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      --chat-ai-bg: linear-gradient(135deg, var(--ivory) 0%, var(--cream) 100%);
+      --chat-border: rgba(154, 175, 136, 0.4);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+    
+    body {
+      font-family: 'Cormorant Garamond', 'Lora', serif;
+      background: 
+        linear-gradient(135deg, var(--sage-light) 0%, var(--cream) 100%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239AAF88' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before,
+    body::after {
+      content: '🌿';
+      position: fixed;
+      font-size: 3rem;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::before {
+      top: 20px;
+      left: 20px;
+      transform: rotate(-45deg);
+    }
+
+    body::after {
+      bottom: 20px;
+      right: 20px;
+      transform: rotate(135deg);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 3rem auto;
+      background: rgba(250, 248, 243, 0.92);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      box-shadow: 
+        0 20px 60px var(--shadow-soft),
+        0 0 0 1px rgba(154, 175, 136, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      padding: 3.5rem;
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(154, 175, 136, 0.3);
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--sage-main), transparent);
+      border-radius: 0 0 12px 12px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: var(--forest);
+      font-weight: 500;
+      font-size: 2.8rem;
+      letter-spacing: -0.5px;
+      text-shadow: 2px 2px 4px var(--shadow-soft);
+    }
+
+    .subtitle {
+      text-align: center;
+      font-style: italic;
+      color: var(--text-secondary);
+      font-size: 1.15rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.85;
+      font-family: 'Lora', serif;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    #wordInput {
+      flex: 1;
+      padding: 1.25rem 1.5rem;
+      border: 2px solid var(--sage-medium);
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-family: 'Cormorant Garamond', serif;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 8px var(--shadow-soft);
+    }
+
+    #wordInput:focus {
+      outline: none;
+      border-color: var(--sage-main);
+      background: var(--ivory);
+      box-shadow: 
+        inset 0 2px 8px var(--shadow-soft),
+        0 0 0 4px rgba(154, 175, 136, 0.15);
+    }
+
+    #wordInput::placeholder {
+      color: var(--sage-dark);
+      opacity: 0.6;
+      font-style: italic;
+    }
+
+    #searchBtn {
+      padding: 1.25rem 2.5rem;
+      background: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      color: var(--ivory);
+      border: none;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 4px 12px rgba(122, 139, 111, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    #searchBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 6px 20px rgba(122, 139, 111, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    #searchBtn:active {
+      transform: translateY(0);
+    }
+
+    #searchBtn:disabled {
+      background: var(--sage-medium);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .history-section {
+      margin-bottom: 2.5rem;
+      padding: 1.75rem;
+      background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage-pale) 100%);
+      border-radius: 20px;
+      border: 1px solid rgba(154, 175, 136, 0.4);
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .history-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--forest);
+    }
+
+    .clear-history {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--sage-medium);
+      color: var(--warm-brown);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      transition: all 0.2s;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .clear-history:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      list-style: none;
+    }
+
+    .history-item {
+      background: linear-gradient(135deg, var(--ivory) 0%, var(--cream) 100%);
+      border: 1px solid var(--sage-medium);
+      border-radius: 24px;
+      padding: 0.5rem 1.1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .history-item:hover {
+      background: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      color: var(--ivory);
+      transform: translateY(-2px);
+    }
+
+    #result {
+      min-height: 150px;
+      padding: 2rem;
+      border: 2px solid var(--sage-medium);
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--ivory) 0%, var(--cream) 100%);
+      margin-bottom: 2rem;
+    }
+
+    .word-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--forest);
+    }
+    
+    .phonetic-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .phonetic {
+      font-family: 'Cormorant Garamond', monospace;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      font-style: italic;
+    }
+    
+    .play-btn {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      color: var(--ivory);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .play-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .play-btn.playing {
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(122, 139, 111, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(122, 139, 111, 0); }
+    }
+
+    .definition-section {
+      margin-bottom: 2rem;
+    }
+    
+    .definition {
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.7);
+      border-left: 4px solid var(--sage-main);
+      border-radius: 0 16px 16px 0;
+      margin-top: 1rem;
+    }
+
+    .definition-label {
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .definition-text {
+      font-size: 1.15rem;
+    }
+
+    /* Synonyms and Antonyms */
+    .word-relations {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 2px dashed var(--sage-medium);
+    }
+
+    .relation-box {
+      background: rgba(255, 255, 255, 0.6);
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--sage-pale);
+    }
+
+    .relation-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--forest);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .relation-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .relation-item {
+      background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage-pale) 100%);
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      border: 1px solid var(--sage-medium);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2rem;
+    }
+
+    .relation-word {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .relation-translation {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--sage-pale);
+      border-top-color: var(--sage-main);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .message {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+    }
+
+    .message.not-found {
+      background: rgba(255, 193, 7, 0.08);
+      border: 2px dashed rgba(255, 193, 7, 0.3);
+      border-radius: 16px;
+    }
+
+    /* Treehouse Button */
+    .treehouse-section {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(154, 175, 136, 0.1) 0%, rgba(181, 196, 168, 0.1) 100%);
+      border-radius: 20px;
+      border: 2px solid var(--sage-medium);
+    }
+
+    .treehouse-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.25rem 3rem;
+      background: linear-gradient(135deg, var(--forest) 0%, var(--moss) 100%);
+      color: var(--ivory);
+      border: none;
+      border-radius: 30px;
+      font-size: 1.3rem;
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(90, 107, 92, 0.3);
+      text-decoration: none;
+    }
+
+    .treehouse-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(90, 107, 92, 0.4);
+    }
+
+    .treehouse-btn:active {
+      transform: translateY(-1px);
+    }
+
+    /* Game Page Styles */
+    .game-page {
+      display: none;
+    }
+
+    .game-page.active {
+      display: block;
+    }
+
+    .dictionary-page.hidden {
+      display: none;
+    }
+
+    .game-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .game-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: var(--forest);
+      margin-bottom: 0.5rem;
+    }
+
+    .game-instruction {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-bottom: 2rem;
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--sage-medium);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      color: var(--forest);
+      font-size: 1.3rem;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .game-card {
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--ivory);
+      position: relative;
+      transform-style: preserve-3d;
+      box-shadow: 0 4px 12px var(--shadow-medium);
+    }
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px var(--shadow-medium);
+    }
+
+    .game-card.flipped {
+      background: linear-gradient(135deg, var(--ivory) 0%, var(--cream) 100%);
+      color: var(--text-primary);
+      border: 2px solid var(--sage-main);
+    }
+
+    .game-card.matched {
+      background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage-pale) 100%);
+      border: 2px solid var(--sage-main);
+      animation: matchPulse 0.5s ease;
+      cursor: default;
+    }
+
+    @keyframes matchPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .card-content {
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .game-result {
+      text-align: center;
+      padding: 3rem;
+      background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage-pale) 100%);
+      border-radius: 20px;
+      border: 2px solid var(--sage-main);
+      margin-top: 2rem;
+    }
+
+    .result-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--forest);
+      margin-bottom: 1rem;
+    }
+
+    .result-message {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-steps {
+      font-size: 1.5rem;
+      color: var(--forest);
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+
+    .result-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .result-btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 24px;
+      font-size: 1.1rem;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .result-btn.primary {
+      background: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      color: var(--ivory);
+    }
+
+    .result-btn.secondary {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--forest);
+      border: 2px solid var(--sage-main);
+    }
+
+    .result-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow-medium);
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--sage-medium);
+      padding: 0.75rem 1.5rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: var(--sage-light);
+      transform: translateX(-3px);
+    }
+
+    .flourish {
+      text-align: center;
+      color: var(--sage-main);
+      font-size: 1.5rem;
+      margin: 1.5rem 0;
+      opacity: 0.5;
+      letter-spacing: 1rem;
+    }
+
+    .attribution {
+      text-align: center;
+      margin-top: 2.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      opacity: 0.7;
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+      }
+      
+      h1 { font-size: 2.2rem; }
+      .search-box { flex-direction: column; }
+      #searchBtn { width: 100%; }
+      .word-relations { grid-template-columns: 1fr; }
+      .game-grid { grid-template-columns: repeat(3, 1fr); }
+      .game-stats { flex-direction: column; gap: 1rem; }
+    }
+
+    .leaf {
+      position: fixed;
+      font-size: 2rem;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .leaf:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+    .leaf:nth-child(2) { top: 60%; right: 5%; animation-delay: 5s; }
+    .leaf:nth-child(3) { bottom: 10%; left: 8%; animation-delay: 10s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-30px) rotate(120deg); }
+      66% { transform: translateY(-15px) rotate(240deg); }
+    }
+
+    /* ========== CHATBOT STYLES ========== */
+    
+    .chatbot-toggle {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--forest) 0%, var(--moss) 100%);
+      color: var(--ivory);
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(90, 107, 92, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      animation: pulse-glow 2s infinite;
+    }
+    
+    .chatbot-toggle:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 8px 25px rgba(90, 107, 92, 0.6);
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(122, 139, 111, 0.4); }
+      50% { box-shadow: 0 0 0 15px rgba(122, 139, 111, 0); }
+    }
+    
+    .chatbot-panel {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 380px;
+      max-height: 600px;
+      background: rgba(250, 248, 243, 0.97);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: 
+        0 20px 60px var(--shadow-soft),
+        0 0 0 1px rgba(154, 175, 136, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(154, 175, 136, 0.4);
+      display: flex;
+      flex-direction: column;
+      z-index: 999;
+      transform: translateY(120%);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: hidden;
+    }
+    
+    .chatbot-panel.active {
+      transform: translateY(0);
+    }
+    
+    .chatbot-header {
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      color: var(--ivory);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .chatbot-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .chatbot-close {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: var(--ivory);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .chatbot-close:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: rotate(90deg);
+    }
+    
+    .chatbot-messages {
+      flex: 1;
+      padding: 1.25rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: 
+        linear-gradient(135deg, rgba(245, 243, 237, 0.7) 0%, rgba(250, 248, 243, 0.9) 100%);
+    }
+    
+    .chat-message {
+      max-width: 85%;
+      padding: 0.9rem 1.2rem;
+      border-radius: 18px;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .chat-message.user {
+      align-self: flex-end;
+      background: var(--chat-user-bg);
+      color: var(--ivory);
+      border-bottom-right-radius: 6px;
+    }
+    
+    .chat-message.ai {
+      align-self: flex-start;
+      background: var(--chat-ai-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--chat-border);
+      border-bottom-left-radius: 6px;
+    }
+    
+    .chatbot-input-area {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--chat-border);
+      display: flex;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.6);
+    }
+    
+    #chatInput {
+      flex: 1;
+      padding: 0.9rem 1.2rem;
+      border: 2px solid var(--sage-medium);
+      border-radius: 24px;
+      font-size: 1rem;
+      font-family: 'Cormorant Garamond', serif;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+    
+    #chatInput:focus {
+      outline: none;
+      border-color: var(--sage-main);
+      background: var(--ivory);
+      box-shadow: 0 0 0 3px rgba(154, 175, 136, 0.2);
+    }
+    
+    #chatInput::placeholder {
+      color: var(--sage-dark);
+      opacity: 0.7;
+      font-style: italic;
+    }
+    
+    #sendChatBtn {
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--sage-main) 0%, var(--sage-dark) 100%);
+      color: var(--ivory);
+      border: none;
+      border-radius: 24px;
+      font-size: 1rem;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    #sendChatBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(122, 139, 111, 0.4);
+    }
+    
+    #sendChatBtn:disabled {
+      background: var(--sage-medium);
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .chat-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem 1rem;
+      border-bottom: 1px dashed var(--sage-medium);
+    }
+    
+    .chat-suggestion {
+      padding: 0.4rem 0.9rem;
+      background: rgba(154, 175, 136, 0.15);
+      border: 1px solid var(--sage-medium);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Cormorant Garamond', serif;
+    }
+    
+    .chat-suggestion:hover {
+      background: var(--sage-light);
+      transform: translateY(-1px);
+    }
+    
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 0.5rem 0;
+      align-self: flex-start;
+    }
+    
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--sage-main);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out;
+    }
+    
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-8px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="leaf">🍃</div>
+  <div class="leaf">🌿</div>
+  <div class="leaf">🍀</div>
+
+  <!-- Dictionary Page -->
+  <div class="container dictionary-page" id="dictionaryPage">
+    <h1>📖 The Enchanted Dictionary</h1>
+    <p class="subtitle">Where words bloom like flowers in a garden</p>
+
+    <div class="search-box">
+      <input 
+        type="text" 
+        id="wordInput" 
+        placeholder="Enter a word to discover its meaning..." 
+        autocomplete="off"
+        maxlength="50"
+      />
+      <button id="searchBtn" type="button">Search</button>
+    </div>
+
+    <div class="history-section" id="historySection" hidden>
+      <div class="history-header">
+        <span class="history-title">Recent Discoveries</span>
+        <button class="clear-history" id="clearHistoryBtn">Clear all</button>
+      </div>
+      <ul class="history-list" id="historyList"></ul>
+    </div>
+
+    <div id="result" aria-live="polite">
+      <div class="message">
+        🌸 Begin your journey by searching for a word above. 
+        <br><span style="font-size: 0.9rem; opacity: 0.8;">Let curiosity guide you through the garden of language.</span>
+      </div>
+    </div>
+
+    <div class="treehouse-section">
+      <p style="margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text-secondary);">
+        🏡 Ready for a playful adventure?
+      </p>
+      <button class="treehouse-btn" id="treehouseBtn" onclick="goToGame()">
+        <span>🌳</span>
+        <span>Enter the Treehouse</span>
+      </button>
+    </div>
+
+    <div class="flourish">✦ </div>
+
+    <div class="attribution">
+      Data from <a href="https://dictionaryapi.dev/" target="_blank" rel="noopener">Free Dictionary API</a> 
+      • Translations via MyMemory API
+    </div>
+  </div>
+
+  <!-- Game Page -->
+  <div class="container game-page" id="gamePage">
+    <button class="back-btn" onclick="goBackToDictionary()">← Back to Dictionary</button>
+    
+    <div class="game-header">
+      <h2 class="game-title">🌳 The Memory Treehouse</h2>
+      <p class="game-instruction">Match the word pairs to clear the garden</p>
+    </div>
+
+    <div class="game-stats">
+      <div class="stat-box">
+        <div class="stat-label">Moves</div>
+        <div class="stat-value" id="moveCount">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Matches</div>
+        <div class="stat-value" id="matchCount">0/8</div>
+      </div>
+    </div>
+
+    <div class="game-grid" id="gameGrid"></div>
+
+    <div class="game-result" id="gameResult" style="display: none;">
+      <h3 class="result-title">🎉 Garden Complete!</h3>
+      <p class="result-message">You've matched all the word pairs!</p>
+      <p class="result-steps" id="finalSteps">Total moves: 0</p>
+      <div class="result-buttons">
+        <button class="result-btn primary" onclick="restartGame()">🌿 Play Again</button>
+        <button class="result-btn secondary" onclick="goBackToDictionary()">📖 Go Back to Homepage</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Toggle Button -->
+  <button class="chatbot-toggle" id="chatbotToggle" title="Ask the Forest Spirit">✨</button>
+
+  <!-- Chatbot Panel -->
+  <div class="chatbot-panel" id="chatbotPanel">
+    <div class="chatbot-header">
+      <div class="chatbot-title">🧚 Forest Spirit Assistant</div>
+      <button class="chatbot-close" id="chatbotClose">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatMessages">
+      <div class="chat-message ai">
+        Hello, wanderer! 🌿 I'm the Forest Spirit. I can help you:
+        <br><br>
+        • Translate sentences to other languages<br>
+        • Upgrade your vocabulary and writing<br>
+        • Explain word meanings in context<br>
+        <br>
+        What would you like to explore today?
+      </div>
+    </div>
+    <div class="chat-suggestions">
+      <div class="chat-suggestion" data-prompt="Translate this to French: The forest whispers ancient secrets.">🇫🇷 Translate to French</div>
+      <div class="chat-suggestion" data-prompt="Upgrade this sentence with more vivid vocabulary: The flower is pretty.">✨ Upgrade my writing</div>
+      <div class="chat-suggestion" data-prompt="What's a more sophisticated word for 'happy'?">📚 Vocabulary help</div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Ask the Forest Spirit..." maxlength="500">
+      <button id="sendChatBtn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
+    const TRANSLATE_API = 'https://api.mymemory.translated.net/get';
+    const HISTORY_KEY = 'enchantedDictionaryHistory';
+    const HISTORY_LIMIT = 10;
+    
+    const wordInput = document.getElementById('wordInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultDiv = document.getElementById('result');
+    const historySection = document.getElementById('historySection');
+    const historyList = document.getElementById('historyList');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+    // Chatbot elements
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    const chatbotPanel = document.getElementById('chatbotPanel');
+    const chatbotClose = document.getElementById('chatbotClose');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    const chatSuggestions = document.querySelectorAll('.chat-suggestion');
+
+    let currentRequest = null;
+    let currentAudio = null;
+
+    // Game state
+    let gameCards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let moveCount = 0;
+    let gameLocked = false;
+
+    // Word pairs for memory game
+    const wordPairs = [
+      { word: 'Serendipity', match: 'Happy Accident' },
+      { word: 'Ephemeral', match: 'Short-lived' },
+      { word: 'Luminous', match: 'Radiant' },
+      { word: 'Tranquil', match: 'Peaceful' },
+      { word: 'Eloquent', match: 'Articulate' },
+      { word: 'Resilient', match: 'Strong' },
+      { word: 'Harmony', match: 'Balance' },
+      { word: 'Whimsical', match: 'Playful' }
+    ];
+
+    // ========== CHATBOT FUNCTIONS ==========
+    
+    // Toggle chatbot panel
+    chatbotToggle.addEventListener('click', () => {
+      chatbotPanel.classList.toggle('active');
+      if (chatbotPanel.classList.contains('active')) {
+        chatInput.focus();
+      }
+    });
+    
+    // Close chatbot panel
+    chatbotClose.addEventListener('click', () => {
+      chatbotPanel.classList.remove('active');
+    });
+    
+    // Send chat message
+    function sendChatMessage() {
+      const message = chatInput.value.trim();
+      if (!message) return;
+      
+      // Add user message
+      addChatMessage(message, 'user');
+      chatInput.value = '';
+      
+      // Show typing indicator
+      showTypingIndicator();
+      
+      // Simulate AI response (mock implementation)
+      setTimeout(() => {
+        hideTypingIndicator();
+        generateAIResponse(message);
+      }, 1200 + Math.random() * 1000);
+    }
+    
+    // Add message to chat
+    function addChatMessage(text, sender) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${sender}`;
+      messageDiv.textContent = text;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Show typing indicator
+    function showTypingIndicator() {
+      const indicator = document.createElement('div');
+      indicator.className = 'typing-indicator';
+      indicator.id = 'typingIndicator';
+      indicator.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      `;
+      chatMessages.appendChild(indicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Hide typing indicator
+    function hideTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+    
+    // Generate AI response (mock implementation)
+    function generateAIResponse(userMessage) {
+      const lowerMsg = userMessage.toLowerCase();
+      
+      // Translation requests
+      if (lowerMsg.includes('translate') || lowerMsg.includes('to french') || lowerMsg.includes('to spanish') || lowerMsg.includes('to chinese')) {
+        let targetLang = 'French';
+        if (lowerMsg.includes('spanish')) targetLang = 'Spanish';
+        if (lowerMsg.includes('chinese') || lowerMsg.includes('mandarin')) targetLang = 'Chinese';
+        
+        // Extract text to translate (simple approach)
+        const textMatch = userMessage.match(/:\s*(.+)$/);
+        const textToTranslate = textMatch ? textMatch[1].trim() : userMessage.replace(/translate.*?:/i, '').trim();
+        
+        // Mock translations
+        const translations = {
+          'The forest whispers ancient secrets.': {
+            'French': 'La forêt murmure des secrets anciens.',
+            'Spanish': 'El bosque susurra secretos antiguos.',
+            'Chinese': '森林低语着古老的秘密。'
+          },
+          'Hello, how are you?': {
+            'French': 'Bonjour, comment allez-vous ?',
+            'Spanish': 'Hola, ¿cómo estás?',
+            'Chinese': '你好，你好吗？'
+          }
+        };
+        
+        const translation = translations[textToTranslate]?.[targetLang] || 
+          `[Mock ${targetLang} translation]: ${textToTranslate} → (This would be translated by a real API)`;
+        
+        addChatMessage(`✨ Here's your ${targetLang} translation:\n\n"${translation}"`, 'ai');
+        return;
+      }
+      
+      // Vocabulary upgrade requests
+      if (lowerMsg.includes('upgrade') || lowerMsg.includes('better word') || lowerMsg.includes('more sophisticated') || lowerMsg.includes('vivid vocabulary')) {
+        const upgrades = {
+          'The flower is pretty.': 'The blossom exudes delicate beauty, its petals a symphony of color dancing in the gentle breeze.',
+          'I am happy.': 'I am filled with profound joy and contentment, my spirit buoyed by life\'s gentle blessings.',
+          'The book is good.': 'The tome is a masterfully crafted literary gem, weaving profound insights with elegant prose.'
+        };
+        
+        const originalText = Object.keys(upgrades).find(key => 
+          userMessage.toLowerCase().includes(key.toLowerCase().replace('the', '').replace('is', '').trim())
+        );
+        
+        if (originalText) {
+          addChatMessage(`🌿 Here's an enhanced version of your sentence:\n\n**Original:** "${originalText}"\n\n**Enhanced:** "${upgrades[originalText]}"\n\n💡 *Tip: Use sensory details and varied vocabulary to bring your writing to life!*`, 'ai');
+        } else {
+          addChatMessage(`🌿 I'd love to help elevate your writing! ✨\n\nTry providing a specific sentence, and I'll suggest more vivid vocabulary, varied sentence structures, and literary devices to make your words bloom like wildflowers in spring. 🌸`, 'ai');
+        }
+        return;
+      }
+      
+      // Word meaning requests
+      if (lowerMsg.includes('word for') || lowerMsg.includes('synonym for') || lowerMsg.includes('meaning of')) {
+        const wordMatch = userMessage.match(/for\s+['"]?(\w+)['"]?$/i) || userMessage.match(/of\s+['"]?(\w+)['"]?$/i);
+        const word = wordMatch ? wordMatch[1] : 'happy';
+        
+        const synonyms = {
+          'happy': ['joyful', 'elated', 'content', 'blissful', 'jubilant'],
+          'sad': ['melancholy', 'sorrowful', 'despondent', 'forlorn', 'wistful'],
+          'big': ['immense', 'colossal', 'substantial', 'monumental', 'expansive'],
+          'small': ['minuscule', 'petite', 'diminutive', 'compact', 'modest']
+        };
+        
+        const words = synonyms[word.toLowerCase()] || ['eloquent', 'resilient', 'serene', 'luminous'];
+        addChatMessage(`📚 For "${word}", consider these enchanting alternatives:\n\n${words.map(w => `• **${w}**`).join('\n')}\n\n✨ *Each word carries its own nuance - choose the one that best fits your context!*`, 'ai');
+        return;
+      }
+      
+      // Default response
+      const defaultResponses = [
+        "🌿 The forest holds many secrets. Could you share more about what you'd like to explore? I'm here to help with translations, writing enhancements, or word wisdom!",
+        "✨ Every word is a seed that can grow into beautiful expression. What would you like to cultivate today?",
+        "🧚 The ancient trees whisper that you might try asking me to:\n• Translate a sentence\n• Enhance your writing\n• Find the perfect word\nWhat calls to your curiosity?"
+      ];
+      
+      addChatMessage(defaultResponses[Math.floor(Math.random() * defaultResponses.length)], 'ai');
+    }
+    
+    // Event listeners for chatbot
+    sendChatBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendChatMessage();
+    });
+    
+    chatSuggestions.forEach(suggestion => {
+      suggestion.addEventListener('click', () => {
+        chatInput.value = suggestion.dataset.prompt;
+        sendChatMessage();
+      });
+    });
+
+    // ========== HISTORY FUNCTIONS ==========
+    
+    function loadHistory() {
+      try {
+        const stored = localStorage.getItem(HISTORY_KEY);
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveHistory(word) {
+      const normalized = word.toLowerCase().trim();
+      if (!normalized) return;
+      
+      let history = loadHistory();
+      history = history.filter(w => w.toLowerCase() !== normalized).slice(0, HISTORY_LIMIT - 1);
+      history.unshift(normalized);
+      
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+          history = history.slice(0, 5);
+          localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        }
+      }
+    }
+
+    function clearHistory() {
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = loadHistory();
+      
+      if (history.length === 0) {
+        historySection.hidden = true;
+        return;
+      }
+      
+      historySection.hidden = false;
+      historyList.innerHTML = '';
+      
+      history.forEach((word) => {
+        const li = document.createElement('li');
+        li.className = 'history-item';
+        li.textContent = word;
+        li.onclick = () => {
+          wordInput.value = word;
+          handleSearch();
+        };
+        historyList.appendChild(li);
+      });
+    }
+
+    // ========== TRANSLATION FUNCTION ==========
+    
+    async function translateText(text, lang = 'zh-cn') {
+      try {
+        const response = await fetch(`${TRANSLATE_API}?q=${encodeURIComponent(text)}&langpair=en|${lang}`);
+        const data = await response.json();
+        return data.responseData?.translatedText || text;
+      } catch (e) {
+        return text; // Fallback to original if translation fails
+      }
+    }
+
+    // ========== DICTIONARY FUNCTIONS ==========
+    
+    function setStateLoading() {
+      resultDiv.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <span>Consulting the ancient tomes...</span>
+        </div>
+      `;
+      searchBtn.disabled = true;
+    }
+
+    function createPlayButton(audioUrl) {
+      return `
+        <button class="play-btn" id="playBtn" onclick="toggleAudio('${audioUrl}')">
+          🔊
+        </button>
+      `;
+    }
+
+    async function toggleAudio(audioUrl) {
+      const btn = document.getElementById('playBtn');
+      if (currentAudio && currentAudio.src === audioUrl && !currentAudio.paused) {
+        currentAudio.pause();
+        btn.classList.remove('playing');
+      } else {
+        if (currentAudio) {
+          currentAudio.pause();
+          document.querySelectorAll('.play-btn').forEach(b => b.classList.remove('playing'));
+        }
+        currentAudio = new Audio(audioUrl);
+        currentAudio.play();
+        btn.classList.add('playing');
+        currentAudio.onended = () => btn.classList.remove('playing');
+      }
+    }
+
+    async function setStateSuccess(data, searchedWord) {
+      saveHistory(searchedWord);
+      renderHistory();
+      
+      const entry = data[0];
+      const word = entry.word;
+      const phonetic = entry.phonetics?.find(p => p.text)?.text || entry.phonetic || '';
+      const definition = entry.meanings?.[0]?.definitions?.[0]?.definition || 'No definition available.';
+      const audioUrl = entry.phonetics?.find(p => p.audio && p.audio.trim() !== '')?.audio || null;
+
+      // Get synonyms and antonyms
+      let synonyms = [];
+      let antonyms = [];
+      
+      if (entry.meanings && entry.meanings.length > 0) {
+        const firstMeaning = entry.meanings[0];
+        synonyms = firstMeaning.synonyms || [];
+        antonyms = firstMeaning.antonyms || [];
+      }
+
+      // Translate synonyms and antonyms
+      const translatedSynonyms = await Promise.all(
+        synonyms.slice(0, 5).map(async (syn) => ({
+          original: syn,
+          translation: await translateText(syn)
+        }))
+      );
+
+      const translatedAntonyms = await Promise.all(
+        antonyms.slice(0, 5).map(async (ant) => ({
+          original: ant,
+          translation: await translateText(ant)
+        }))
+      );
+
+      let audioHtml = audioUrl ? createPlayButton(audioUrl) : '<span style="opacity: 0.6;">🔇 No audio</span>';
+
+      let relationsHtml = '';
+      if (translatedSynonyms.length > 0 || translatedAntonyms.length > 0) {
+        relationsHtml = `
+          <div class="word-relations">
+            ${translatedSynonyms.length > 0 ? `
+              <div class="relation-box">
+                <h3 class="relation-title">🌸 Synonyms</h3>
+                <ul class="relation-list">
+                  ${translatedSynonyms.map(s => `
+                    <li class="relation-item">
+                      <span class="relation-word">${escapeHtml(s.original)}</span>
+                      <span class="relation-translation">${escapeHtml(s.translation)}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+            ` : ''}
+            ${translatedAntonyms.length > 0 ? `
+              <div class="relation-box">
+                <h3 class="relation-title">🍂 Antonyms</h3>
+                <ul class="relation-list">
+                  ${translatedAntonyms.map(a => `
+                    <li class="relation-item">
+                      <span class="relation-word">${escapeHtml(a.original)}</span>
+                      <span class="relation-translation">${escapeHtml(a.translation)}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      resultDiv.innerHTML = `
+        <h2 class="word-title">${escapeHtml(word)}</h2>
+        <div class="phonetic-row">
+          ${phonetic ? `<span class="phonetic">/${escapeHtml(phonetic)}/</span>` : ''}
+          ${audioHtml}
+        </div>
+        <div class="definition-section">
+          <div class="definition-label">Definition</div>
+          <div class="definition">${escapeHtml(definition)}</div>
+        </div>
+        ${relationsHtml}
+      `;
+      
+      searchBtn.disabled = false;
+    }
+
+    function setStateNotFound(word) {
+      resultDiv.innerHTML = `
+        <div class="message not-found">
+          <strong>🌿 Word not found in our garden</strong><br>
+          <span style="font-size: 1rem; margin-top: 0.5rem; display: inline-block;">
+            "${escapeHtml(word)}" seems to have wandered off.<br>
+            Try another word, or check the spelling.
+          </span>
+        </div>
+      `;
+      searchBtn.disabled = false;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function validateInput(word) {
+      const trimmed = word.trim();
+      if (!trimmed) return { valid: false, message: 'Please enter a word.' };
+      if (!/^[a-zA-Z\-']+$/.test(trimmed)) {
+        return { valid: false, message: 'Only letters, hyphens, and apostrophes allowed.' };
+      }
+      if (trimmed.length > 50) {
+        return { valid: false, message: 'Word too long.' };
+      }
+      return { valid: true, word: trimmed };
+    }
+
+    async function fetchDefinition(word) {
+      if (currentRequest) currentRequest.abort();
+      currentRequest = new AbortController();
+
+      const response = await fetch(`${API_BASE}${encodeURIComponent(word)}`, {
+        signal: currentRequest.signal,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) return { status: 'notFound', word };
+        if (response.status === 429) return { status: 'error', message: 'Too many requests.' };
+        return { status: 'error', message: 'Server error.' };
+      }
+
+      const data = await response.json();
+      if (!Array.isArray(data) || data.length === 0) return { status: 'notFound', word };
+      return { status: 'success', data };
+    }
+
+    async function handleSearch() {
+      const validation = validateInput(wordInput.value);
+      if (!validation.valid) {
+        alert(validation.message);
+        return;
+      }
+
+      const word = validation.word;
+      setStateLoading();
+
+      try {
+        const result = await fetchDefinition(word);
+        
+        if (result.status === 'success') {
+          setStateSuccess(result.data, word);
+        } else if (result.status === 'notFound') {
+          saveHistory(word);
+          renderHistory();
+          setStateNotFound(result.word);
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          alert('Network error. Please try again.');
+        }
+      } finally {
+        searchBtn.disabled = false;
+      }
+    }
+
+    // ========== GAME FUNCTIONS ==========
+    
+    function goToGame() {
+      document.getElementById('dictionaryPage').classList.add('hidden');
+      document.getElementById('gamePage').classList.add('active');
+      initGame();
+    }
+
+    function goBackToDictionary() {
+      document.getElementById('gamePage').classList.remove('active');
+      document.getElementById('dictionaryPage').classList.remove('hidden');
+      document.getElementById('gameResult').style.display = 'none';
+    }
+
+    function initGame() {
+      // Reset game state
+      flippedCards = [];
+      matchedPairs = 0;
+      moveCount = 0;
+      gameLocked = false;
+      
+      updateStats();
+      document.getElementById('gameResult').style.display = 'none';
+      
+      // Create card pairs
+      let cards = [];
+      wordPairs.forEach((pair, index) => {
+        cards.push({ id: index, text: pair.word, pairId: index });
+        cards.push({ id: index + 100, text: pair.match, pairId: index });
+      });
+      
+      // Shuffle cards
+      cards.sort(() => Math.random() - 0.5);
+      gameCards = cards;
+      
+      // Render grid
+      const grid = document.getElementById('gameGrid');
+      grid.innerHTML = '';
+      
+      cards.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'game-card';
+        cardEl.dataset.index = index;
+        cardEl.dataset.pairId = card.pairId;
+        cardEl.innerHTML = '<div class="card-content">?</div>';
+        cardEl.onclick = () => flipCard(index);
+        grid.appendChild(cardEl);
+      });
+    }
+
+    function flipCard(index) {
+      if (gameLocked) return;
+      
+      const card = gameCards[index];
+      const cardEl = document.querySelector(`[data-index="${index}"]`);
+      
+      if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) {
+        return;
+      }
+      
+      // Flip the card
+      cardEl.classList.add('flipped');
+      cardEl.innerHTML = `<div class="card-content">${card.text}</div>`;
+      
+      flippedCards.push({ index, pairId: card.pairId, element: cardEl });
+      
+      if (flippedCards.length === 2) {
+        moveCount++;
+        updateStats();
+        checkMatch();
+      }
+    }
+
+    function checkMatch() {
+      gameLocked = true;
+      const [card1, card2] = flippedCards;
+      
+      if (card1.pairId === card2.pairId) {
+        // Match found
+        setTimeout(() => {
+          card1.element.classList.add('matched');
+          card2.element.classList.add('matched');
+          matchedPairs++;
+          updateStats();
+          flippedCards = [];
+          gameLocked = false;
+          
+          if (matchedPairs === wordPairs.length) {
+            setTimeout(showGameResult, 500);
+          }
+        }, 500);
+      } else {
+        // No match
+        setTimeout(() => {
+          card1.element.classList.remove('flipped');
+          card2.element.classList.remove('flipped');
+          card1.element.innerHTML = '<div class="card-content">?</div>';
+          card2.element.innerHTML = '<div class="card-content">?</div>';
+          flippedCards = [];
+          gameLocked = false;
+        }, 1000);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('moveCount').textContent = moveCount;
+      document.getElementById('matchCount').textContent = `${matchedPairs}/${wordPairs.length}`;
+    }
+
+    function showGameResult() {
+      document.getElementById('finalSteps').textContent = `Total moves: ${moveCount}`;
+      document.getElementById('gameResult').style.display = 'block';
+    }
+
+    function restartGame() {
+      initGame();
+    }
+
+    // ========== EVENT LISTENERS ==========
+    
+    searchBtn.addEventListener('click', handleSearch);
+    wordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSearch();
+    });
+    clearHistoryBtn.addEventListener('click', clearHistory);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      wordInput.focus();
+      renderHistory();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      if (currentAudio) {
+        currentAudio.pause();
+      }
+    });
+  </script>
+</body>
+</html>
